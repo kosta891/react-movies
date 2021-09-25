@@ -1,21 +1,17 @@
-import { useState, useContext, createContext, useEffect } from 'react';
+import { useState, useContext, createContext } from 'react';
 // make sure to use https
+import useFetch from './useFetch';
 
 export const API_ENDPOINT = `https://www.omdbapi.com/?apikey=${process.env.REACT_APP_MOVIE_API_KEY}`;
-
 const AppContext = createContext();
 
 const AppProvider = (props) => {
-  const [state, setState] = useState();
-
-  const updateState = () => {
-    setState('test');
-  };
-
-  const context = { state };
-
+  const [query, setQuery] = useState('matrix');
+  const { isLoading, error, data: movies } = useFetch(`&s=${query}`);
   return (
-    <AppContext.Provider value={context}>{props.children}</AppContext.Provider>
+    <AppContext.Provider value={{ isLoading, error, movies, query, setQuery }}>
+      {props.children}
+    </AppContext.Provider>
   );
 };
 
@@ -23,4 +19,4 @@ export const useGlobalContext = () => {
   return useContext(AppContext);
 };
 
-export { AppProvider };
+export { AppProvider, AppContext };
